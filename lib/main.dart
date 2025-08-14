@@ -1,9 +1,22 @@
+import 'dart:convert';
+
 import 'package:fl/core/my_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-void main() {
+import 'core/routes.dart';
+
+dynamic myLanguage;
+
+void main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  myLanguage = await loadJsonData();
+  print(myLanguage.toString());
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -15,7 +28,10 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: MyTheme().myThemeData(),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      darkTheme: MyTheme().myThemeDataDark(),
+      themeMode: ThemeMode.light,
+      getPages: Routes.getPages,
+      initialRoute: Routes.HOME,
     );
   }
 }
@@ -104,4 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+Future<Map<String, dynamic>> loadJsonData() async {
+  String jsonString = await rootBundle.loadString('assets/lang/en.json');
+  return json.decode(jsonString);
 }
